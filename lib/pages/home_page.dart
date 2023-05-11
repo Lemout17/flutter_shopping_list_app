@@ -96,15 +96,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    if (data == null) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
     setState(() {
-      _groceryItems = data;
+      _groceryItems = data!;
       _isLoading = false;
     });
   }

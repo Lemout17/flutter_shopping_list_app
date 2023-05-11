@@ -18,7 +18,7 @@ class ApiService {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        if (response.body == 'null') return null;
+        if (response.body == 'null') return [];
 
         final Map<String, dynamic> listData = json.decode(response.body);
         final List<GroceryItem> loadedItems = [];
