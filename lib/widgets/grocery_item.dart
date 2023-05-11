@@ -17,12 +17,14 @@ class GroceryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(name),
+      title: Text(
+        name.substring(0, 1).toUpperCase() + name.substring(1),
+      ),
       leading: CircleAvatar(
         maxRadius: 20,
         backgroundColor: category.color,
         child: Text(
-          name.substring(0, 1),
+          name.substring(0, 1).toUpperCase(),
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

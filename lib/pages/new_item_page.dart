@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_shopping_list_app/api/api_constants.dart';
 import 'package:flutter_shopping_list_app/data/data.dart';
 import 'package:flutter_shopping_list_app/models/category.dart';
+import 'package:flutter_shopping_list_app/models/grocery.dart';
 import 'package:http/http.dart' as http;
 
 class NewItemPage extends StatefulWidget {
@@ -17,6 +19,7 @@ class _NewItemPageState extends State<NewItemPage> {
   String _enteredName = '';
   int _enteredQuantity = 1;
   Category _selectedCategory = Constants.categories[Categories.vegetables]!;
+  bool _isSending = false;
 
   @override
   Widget build(BuildContext context) {
@@ -113,12 +116,18 @@ class _NewItemPageState extends State<NewItemPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: _resetForm,
+                    onPressed: _isSending ? null : _resetForm,
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: _saveItem,
-                    child: const Text('Add Item'),
+                    onPressed: _isSending ? null : _saveItem,
+                    child: _isSending
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text('Add Item'),
                   ),
                 ],
               )
@@ -132,9 +141,12 @@ class _NewItemPageState extends State<NewItemPage> {
   Future<void> _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      setState(() {
+        _isSending = true;
+      });
       final url = Uri.https(
-        'flutter-grocery-app-d325e-default-rtdb.europe-west1.firebasedatabase.app',
-        'shoping-list.json',
+        ApiConstants.url,
+        '${ApiConstants.shopingListEndpoint}.json',
       );
       final response = await http.post(
         url,
@@ -148,8 +160,17 @@ class _NewItemPageState extends State<NewItemPage> {
         }),
       );
 
+      final responseData = json.decode(response.body);
+
       if (context.mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(
+          GroceryItem(
+            id: responseData['name'],
+            name: _enteredName,
+            quantity: _enteredQuantity,
+            category: _selectedCategory,
+          ),
+        );
       }
     }
   }
