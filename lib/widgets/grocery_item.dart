@@ -19,7 +19,7 @@ class GroceryListItem extends StatelessWidget {
     return ListTile(
       title: Text(name),
       leading: CircleAvatar(
-        maxRadius: 18,
+        maxRadius: 20,
         backgroundColor: category.color,
         child: Text(
           name.substring(0, 1),
